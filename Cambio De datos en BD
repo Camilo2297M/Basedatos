@@ -1,3 +1,7 @@
 como modificar el tipo de dato en una tabla ya creada:
 select * from Clientes; // selecionando primero la tabla que se va a modificar
 ALTER TABLE Clientes ALTER COLUMN Consecutivo Nvarchar(100); // usamos alter para la modificacion y selecionamos la tabla y la columna que se va a modificar
+
+///////////eliminacion de una fila en la base de datos////////////
+delete from Clientes /////////se selecciona la tabla que se va a modificar
+where clienteid = 5 se selecciona la fila con su id que se va a eliminar
