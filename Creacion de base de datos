@@ -1,0 +1,230 @@
+USE SupermercadoDB;
+
+-- Eliminar tablas si existen (en caso de que quieras empezar desde cero)
+IF OBJECT_ID('dbo.Clientes', 'U') IS NOT NULL
+    DROP TABLE dbo.Clientes;
+IF OBJECT_ID('dbo.Productos', 'U') IS NOT NULL
+    DROP TABLE dbo.Productos;
+IF OBJECT_ID('dbo.Proveedores', 'U') IS NOT NULL
+    DROP TABLE dbo.Proveedores;
+IF OBJECT_ID('dbo.MetodosPago', 'U') IS NOT NULL
+    DROP TABLE dbo.MetodosPago;
+IF OBJECT_ID('dbo.Inventario', 'U') IS NOT NULL
+    DROP TABLE dbo.Inventario;
+IF OBJECT_ID('dbo.Ventas', 'U') IS NOT NULL
+    DROP TABLE dbo.Ventas;
+IF OBJECT_ID('dbo.DetallesVenta', 'U') IS NOT NULL
+    DROP TABLE dbo.DetallesVenta;
+IF OBJECT_ID('dbo.Contador', 'U') IS NOT NULL
+    DROP TABLE dbo.Contador;
+
+-- Crear tabla Contador
+CREATE TABLE Contador (
+    Tabla NVARCHAR(50) PRIMARY KEY,
+    UltimoConsecutivo INT NOT NULL
+);
+
+-- Inicializar la tabla Contador con valores
+INSERT INTO Contador (Tabla, UltimoConsecutivo)
+VALUES 
+    ('Clientes', 0),
+    ('Productos', 0),
+    ('Proveedores', 0),
+    ('Inventario', 0),
+    ('Ventas', 0),
+    ('DetallesVenta', 0);
+
+-- Crear tabla Clientes
+CREATE TABLE Clientes (
+    ClienteID INT PRIMARY KEY IDENTITY(1,1),
+    Consecutivo INT NOT NULL UNIQUE,
+    Nombre NVARCHAR(100) NOT NULL,
+    Email NVARCHAR(100) UNIQUE,
+    Telefono NVARCHAR(15),
+    Direccion NVARCHAR(255)
+);
+
+-- Crear tabla Productos
+CREATE TABLE Productos (
+    ProductoID INT PRIMARY KEY IDENTITY(1,1),
+    Consecutivo INT NOT NULL UNIQUE,
+    Nombre NVARCHAR(100) NOT NULL,
+    Precio DECIMAL(10, 2) NOT NULL
+);
+
+-- Crear tabla Proveedores
+CREATE TABLE Proveedores (
+    ProveedorID INT PRIMARY KEY IDENTITY(1,1),
+    Consecutivo INT NOT NULL UNIQUE,
+    Nombre NVARCHAR(100) NOT NULL,
+    Telefono NVARCHAR(15),
+    Direccion NVARCHAR(255)
+);
+
+-- Crear tabla MetodosPago
+CREATE TABLE MetodosPago (
+    MetodoID INT PRIMARY KEY IDENTITY(1,1),
+    Metodo NVARCHAR(50) NOT NULL
+);
+
+-- Insertar datos en la tabla MetodosPago
+INSERT INTO MetodosPago (Metodo)
+VALUES ('NEQUI'), ('DAVIPLATA'), ('EFECTIVO'), ('FIADO');
+
+-- Crear tabla Inventario
+CREATE TABLE Inventario (
+    InventarioID INT PRIMARY KEY IDENTITY(1,1),
+    Consecutivo INT NOT NULL UNIQUE,
+    ProductoID INT,
+    Ubicacion NVARCHAR(100) NOT NULL,
+    Cantidad INT NOT NULL,
+    FechaVencimiento DATE,
+    FOREIGN KEY (ProductoID) REFERENCES Productos(ProductoID)
+);
+
+-- Crear tabla Ventas
+CREATE TABLE Ventas (
+    VentaID INT PRIMARY KEY IDENTITY(1,1),
+    Consecutivo INT NOT NULL UNIQUE,
+    ClienteID INT,
+    Fecha DATE NOT NULL,
+    Total DECIMAL(10, 2) NOT NULL,
+    MetodoPagoID INT,
+    Notas NVARCHAR(255),
+    FOREIGN KEY (ClienteID) REFERENCES Clientes(ClienteID),
+    FOREIGN KEY (MetodoPagoID) REFERENCES MetodosPago(MetodoID)
+);
+
+-- Crear tabla DetallesVenta
+CREATE TABLE DetallesVenta (
+    DetalleID INT PRIMARY KEY IDENTITY(1,1),
+    Consecutivo INT NOT NULL UNIQUE,
+    VentaID INT,
+    ProductoID INT,
+    Cantidad INT NOT NULL,
+    PrecioUnitario DECIMAL(10, 2) NOT NULL,
+    FOREIGN KEY (VentaID) REFERENCES Ventas(VentaID),
+    FOREIGN KEY (ProductoID) REFERENCES Productos(ProductoID)
+);
+
+
+
+
+
+creacion de togger para que el consecutivo aumente en la creacion de cada registro:
+USE SupermercadoDB;
+GO
+
+-- Eliminar trigger si ya existe
+IF OBJECT_ID('trg_InsertClientes', 'TR') IS NOT NULL
+    DROP TRIGGER trg_InsertClientes;
+GO
+
+-- Crear trigger para la tabla Clientes
+CREATE TRIGGER trg_InsertClientes
+ON Clientes
+AFTER INSERT
+AS
+BEGIN
+    DECLARE @NuevoConsecutivo INT;
+
+    -- Obtener el nuevo consecutivo para Clientes
+    UPDATE Contador
+    SET UltimoConsecutivo = (SELECT ISNULL(MAX(Consecutivo), 0) FROM Clientes)
+    WHERE Tabla = 'Clientes';
+
+    -- Obtener el nuevo consecutivo
+    SELECT @NuevoConsecutivo = UltimoConsecutivo + 1
+    FROM Contador
+    WHERE Tabla = 'Clientes';
+
+    -- Actualizar el nuevo consecutivo en los registros insertados
+    UPDATE Clientes
+    SET Consecutivo = @NuevoConsecutivo
+    WHERE ClienteID IN (SELECT ClienteID FROM inserted);
+END;
+GO
+Trigger para la tabla Productos
+sql
+Copiar código
+USE SupermercadoDB;
+GO
+
+-- Eliminar trigger si ya existe
+IF OBJECT_ID('trg_InsertProductos', 'TR') IS NOT NULL
+    DROP TRIGGER trg_InsertProductos;
+GO
+
+-- Crear trigger para la tabla Productos
+CREATE TRIGGER trg_InsertProductos
+ON Productos
+AFTER INSERT
+AS
+BEGIN
+    DECLARE @NuevoConsecutivoProducto INT;
+
+    -- Obtener el nuevo consecutivo para Productos
+    UPDATE Contador
+    SET UltimoConsecutivo = (SELECT ISNULL(MAX(Consecutivo), 0) FROM Productos)
+    WHERE Tabla = 'Productos';
+
+    -- Obtener el nuevo consecutivo
+    SELECT @NuevoConsecutivoProducto = UltimoConsecutivo + 1
+    FROM Contador
+    WHERE Tabla = 'Productos';
+
+    -- Actualizar el nuevo consecutivo en los registros insertados
+    UPDATE Productos
+    SET Consecutivo = @NuevoConsecutivoProducto
+    WHERE ProductoID IN (SELECT ProductoID FROM inserted);
+END;
+GO
+Trigger para la tabla Proveedores
+sql
+Copiar código
+USE SupermercadoDB;
+GO
+
+-- Eliminar trigger si ya existe
+IF OBJECT_ID('trg_InsertProveedores', 'TR') IS NOT NULL
+    DROP TRIGGER trg_InsertProveedores;
+GO
+
+-- Crear trigger para la tabla Proveedores
+CREATE TRIGGER trg_InsertProveedores
+ON Proveedores
+AFTER INSERT
+AS
+BEGIN
+    DECLARE @NuevoConsecutivoProveedor INT;
+
+    -- Obtener el nuevo consecutivo para Proveedores
+    UPDATE Contador
+    SET UltimoConsecutivo = (SELECT ISNULL(MAX(Consecutivo), 0) FROM Proveedores)
+    WHERE Tabla = 'Proveedores';
+
+    -- Obtener el nuevo consecutivo
+    SELECT @NuevoConsecutivoProveedor = UltimoConsecutivo + 1
+    FROM Contador
+    WHERE Tabla = 'Proveedores';
+
+    -- Actualizar el nuevo consecutivo en los registros insertados
+    UPDATE Proveedores
+    SET Consecutivo = @NuevoConsecutivoProveedor
+    WHERE ProveedorID IN (SELECT ProveedorID FROM inserted);
+END;
+GO
+
+como se ingresan los datos a cada tabla
+
+USE SupermercadoDB;
+GO
+
+INSERT INTO Clientes (CodigoUnico, Nombre, Email, Telefono, Direccion)
+VALUES 
+('CL001', 'Juan Pérez', 'juan.perez@example.com', '1234567890', 'Calle Falsa 123'),
+('CL002', 'María Gómez', 'maria.gomez@example.com', '2345678901', 'Avenida Siempre Viva 456'),
+('CL003', 'Carlos Ruiz', 'carlos.ruiz@example.com', '3456789012', 'Boulevard de los Sueños 789'),
+('CL004', 'Ana Martínez', 'ana.martinez@example.com', '4567890123', 'Plaza Mayor 101'),
+('CL005', 'Luis Fernández', 'luis.fernandez@example.com', '5678901234', 'Camino del Rey 202');
+GO
