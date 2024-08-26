@@ -1,0 +1,3 @@
+como modificar el tipo de dato en una tabla ya creada:
+select * from Clientes; // selecionando primero la tabla que se va a modificar
+ALTER TABLE Clientes ALTER COLUMN Consecutivo Nvarchar(100); // usamos alter para la modificacion y selecionamos la tabla y la columna que se va a modificar
