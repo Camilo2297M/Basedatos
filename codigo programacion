@@ -1,0 +1,23 @@
+solicitar datos por consola
+*****   Console.Write("Ingrese su edad: ");
+------------------------------------------
+tomar los datos que digito el usuario por consola
+***** int edad = Convert.ToInt32(Console.ReadLine());
+
+
+---------------------------------------------------
+estructura
+using System;
+
+class Program
+{
+    static void Main()
+    {
+        // Solicitar al usuario que ingrese su edad
+        Console.Write("Ingrese su edad: ");
+        int edad = Convert.ToInt32(Console.ReadLine());
+        
+        // Clasificar y mostrar la categoría de edad
+        // (Aquí deberás añadir tu código)
+    }
+}
