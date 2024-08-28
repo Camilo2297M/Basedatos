@@ -127,3 +127,25 @@ public class Program
         Console.WriteLine("Monto final a pagar (incluyendo impuestos):" +montoFinal);
     }
 }
+
+
+
+
+********************************************************************************
+darle color a los botones de bootstrap y quitarle el subrayado
+********************************************************************************
+<li class="d-inline">
+    <button type="button" class="btn btn-success">
+        @Html.ActionLink("Editar ", "Edit", new { id = item.id }, new { @style = "color:black;text-decoration: none;"})
+    </button>
+</li>
+<li class="d-inline">
+    <button type="button" class="btn btn-warning">
+        @Html.ActionLink("Detalles", "Details", new { id = item.id },new { @style = "color:black;text-decoration: none;" })
+    </button>
+</li>
+<li class="d-inline">
+    <button type="button" class="btn btn-danger">
+        @Html.ActionLink("Eliminar", "Delete", new { id = item.id },new { @style = "color:black;text-decoration: none;" })
+    </button>
+</li>
