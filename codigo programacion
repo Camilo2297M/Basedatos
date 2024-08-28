@@ -22,3 +22,43 @@ class Program
         // (Aquí deberás añadir tu código)
     }
 }
+
+-------------------------------------------------------------------------
+-------------------------------------------------------------------------
+codigo------------
+
+
+using System;
+
+public class Program
+{
+   public static void Main()
+    {
+        // Solicitar al usuario que ingrese su edad
+        Console.Write("Ingrese su edad: ");
+        int edad = Convert.ToInt32(Console.ReadLine());
+        
+	   if (edad <12)
+	   {
+		   Console.Write("Es Infantil");
+	   }
+	   else if(edad >=12 && edad <=17)
+	   {
+		   Console.Write("Es Adolecente");
+	   }
+	   else if(edad >=18 && edad <= 24 )
+	   {
+		Console.Write("Adulto Joven");   
+	   }
+	   else if(edad >=25 && edad <=65)
+	   {
+		   Console.Write("Adulto ");
+	   }
+	   else
+	   {
+		   Console.Write("Anciano: ");
+	   }
+        // Clasificar y mostrar la categoría de edad
+        // (Aquí deberás añadir tu código)
+    }
+}
