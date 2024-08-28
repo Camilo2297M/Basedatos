@@ -6,7 +6,8 @@ tomar los datos que digito el usuario por consola
 
 
 ---------------------------------------------------
-estructura
+estructura----------------------
+
 using System;
 
 class Program
