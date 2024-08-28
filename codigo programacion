@@ -62,3 +62,68 @@ public class Program
         // (Aquí deberás añadir tu código)
     }
 }
+
+
+
+*****************************************************************
+*****************************************************************
+Programa de calcular descuentos
+*****************************************************************
+
+using System;
+
+public class Program
+{
+    public static void Main()
+    {
+        // Solicitar al usuario el total del pedido
+        Console.Write("Ingrese el total del pedido: $");
+        double totalPedido = Convert.ToDouble(Console.ReadLine());
+
+        // Solicitar al usuario la fecha de compra
+        Console.Write("Ingrese la fecha de compra (formato YYYY-MM-DD): ");
+        DateTime fechaCompra = DateTime.Parse(Console.ReadLine());
+
+        // Inicializar el costo de envío
+        double costoEnvio = 0;
+
+        // Determinar el costo de envío
+        if (totalPedido < 50)
+        {
+            costoEnvio = 10;
+        }
+        else if (totalPedido >= 50 && totalPedido <= 100)
+        {
+            costoEnvio = 5;
+        }
+        else
+        {
+            costoEnvio = 0;
+        }
+
+        // Aplicar descuento por monto
+        double descuento = 0;
+        if (totalPedido > 200)
+        {
+            descuento += 0.05; // 5% de descuento
+        }
+
+        // Aplicar descuento de temporada
+        if (fechaCompra.Month == 12) // Diciembre
+        {
+            descuento += 0.10; // 10% de descuento adicional
+        }
+
+        // Calcular el monto después de aplicar los descuentos
+        double montoConDescuentos = totalPedido * (1 - descuento);
+
+        // Calcular el monto final después de aplicar el impuesto
+        double impuesto = 0.08; // 8% de impuesto
+        double montoFinal = (montoConDescuentos + costoEnvio) * (1 + impuesto);
+
+        // Mostrar resultados
+        Console.WriteLine("Costo de Envío:"+ costoEnvio);
+        Console.WriteLine("Monto después de aplicar descuentos: "+montoConDescuentos);
+        Console.WriteLine("Monto final a pagar (incluyendo impuestos):" +montoFinal);
+    }
+}
